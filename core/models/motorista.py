@@ -1,4 +1,8 @@
+from logging import PlaceHolder
+
 from django.db import models
+
+from django import template
 
 class Motorista (models.Model):
     nome = models.CharField(max_length=120)
