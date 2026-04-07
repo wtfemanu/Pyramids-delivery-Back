@@ -16,9 +16,9 @@ class Carga(models.Model):
     S = 'Dolar'
     
     UNIDADES_MOEDAS=[
-         (KG, 'Quilogramas'),
-        (TON, 'Toneladas'),
-        (G, 'Gramas'),
+         (RS, 'Reais'),
+        (EU, 'Euros'),
+        (S, 'Dólares'),
     ]
 
 
@@ -32,7 +32,7 @@ class Carga(models.Model):
     ) 
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     moeda = models.CharField(
-        max_length=3, 
+        max_length=5, 
         choices=UNIDADES_MOEDAS, 
         default=RS
     ) 
