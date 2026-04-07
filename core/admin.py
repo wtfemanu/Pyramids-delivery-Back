@@ -56,4 +56,5 @@ admin.site.register(models.Motorista)
 admin.site.register(models.Veiculo)
 admin.site.register(models.Rota)
 admin.site.register(models.Carga)
+admin.site.register(models.Frete)
 
