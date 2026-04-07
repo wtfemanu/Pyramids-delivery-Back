@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path
+from core.models import Motorista
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
@@ -12,11 +13,17 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
-from core.views import UserRegistrationView, UserViewSet
+from core.views import MotoristaViewSet, UserRegistrationView, UserViewSet, VeiculoViewSet, CargaViewSet, RotaViewSet
 
 router = DefaultRouter()
 
 router.register(r'usuarios', UserViewSet, basename='usuarios')
+router.register(r'motorista',MotoristaViewSet, basename='motorista')
+router.register(r'veiculo',VeiculoViewSet, basename='veiculo')
+router.register(r'carga',CargaViewSet, basename='carga')
+router.register(r'rota',RotaViewSet, basename='rota')
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
