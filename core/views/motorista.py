@@ -5,3 +5,4 @@ from core.serializers import MotoristaSerializer
 class MotoristaViewSet(ModelViewSet):
     queryset = Motorista.objects.all()
     serializer_class = MotoristaSerializer
+    

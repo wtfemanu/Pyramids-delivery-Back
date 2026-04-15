@@ -18,11 +18,11 @@ from core.views import MotoristaViewSet, UserRegistrationView, UserViewSet, Veic
 router = DefaultRouter()
 
 router.register(r'usuarios', UserViewSet, basename='usuarios')
-router.register(r'motorista',MotoristaViewSet, basename='motorista')
-router.register(r'veiculo',VeiculoViewSet, basename='veiculo')
-router.register(r'carga',CargaViewSet, basename='carga')
-router.register(r'rota',RotaViewSet, basename='rota')
-router.register(r'frete',FreteViewSet, basename='frete')
+router.register(r'motoristas',MotoristaViewSet, basename='motoristas')
+router.register(r'veiculos',VeiculoViewSet, basename='veiculos')
+router.register(r'cargas',CargaViewSet, basename='cargas')
+router.register(r'rotas',RotaViewSet, basename='rotas')
+router.register(r'fretes',FreteViewSet, basename='fretes')
 
 
 urlpatterns = [

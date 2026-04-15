@@ -4,6 +4,7 @@ from .motorista import Motorista
 from .veiculo import Veiculo
 from .rota import Rota
 
+
 class Frete(models.Model):
 
     RS = 'Reais'
