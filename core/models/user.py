@@ -51,10 +51,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text=_('Indica que este usuário pode acessar o Admin.'),
     )
 
+    
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    USERNAME_FIELD = 'email' 
+    REQUIRED_FIELDS = ['name'] # Campos obrigatórios ao criar via terminal
 
     class Meta:
         """Meta options for the model."""
