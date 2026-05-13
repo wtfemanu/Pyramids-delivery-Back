@@ -45,5 +45,7 @@ class CustomLoginView(ObtainAuthToken):
         return Response({
             'token': token.key,
             'user_id': user.pk,
-            'email': user.email
+            'email': user.email,
+            'is_staff': user.is_staff,
+            'is_superuser': user.is_superuser
         })
