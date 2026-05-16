@@ -120,14 +120,15 @@ if MODE == 'DEVELOPMENT':
     MEDIA_URL = f'http://{MY_IP}:19003/media/'
 else:
     MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
     CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
     STORAGES = {
-        'default': {
-            'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
         },
-        'staticfiles': {
-            'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
         },
     }
 
@@ -162,3 +163,4 @@ SIMPLE_JWT = {
 
 # Exibe as configurações principais para verificação
 print(f'{MODE = } \n{MEDIA_URL = } \n{DATABASES = }')
+

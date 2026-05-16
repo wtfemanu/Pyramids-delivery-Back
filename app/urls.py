@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path
+from django.conf.urls.static import static  
 from core.models import Motorista
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -12,7 +13,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
 )
-
+from django.conf import settings  
 from core.views import MotoristaViewSet, UserRegistrationView, UserViewSet, VeiculoViewSet, CargaViewSet, RotaViewSet, UserViewSet, FreteViewSet, CustomLoginView
 
 router = DefaultRouter()
@@ -47,6 +48,7 @@ urlpatterns = [
     path('api/registro/', UserRegistrationView.as_view(), name='user_registration'),
     path('api/login/', CustomLoginView.as_view(), name='login'),
     # API
-    path('api/', include(router.urls)),
-  
+    path('api/', include(router.urls)), 
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
