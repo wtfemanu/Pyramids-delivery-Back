@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings  # Importante para o Custom User
 
 class Carga(models.Model):
     KG = 'KG'
@@ -21,6 +22,13 @@ class Carga(models.Model):
          (S, 'Dólares'),
     ]
 
+    # VÍNCULO OBRIGATÓRIO: Rastreia o criador da carga
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        db_column='id_usuario',
+        related_name='cargas'
+    )
     descricao = models.CharField(max_length=255)
     peso = models.DecimalField(max_digits=10, decimal_places=2)
     unidade = models.CharField(
@@ -34,8 +42,6 @@ class Carga(models.Model):
         choices=UNIDADES_MOEDAS, 
         default=RS
     ) 
-
-    # NOVO CAMPO: Guarda a foto dentro da pasta 'cargas/' dentro de media/
     foto = models.ImageField(upload_to='cargas/', null=True, blank=True)
 
     def __str__(self):
