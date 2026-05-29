@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from .carga import Carga
 from .motorista import Motorista
 from .veiculo import Veiculo
@@ -8,16 +9,22 @@ from .rota import Rota
 class Frete(models.Model):
 
     RS = 'Reais'
-    EU ='Euro'
+    EU = 'Euro'
     S = 'Dolar'
     
     UNIDADES_MOEDAS=[
          (RS, 'Reais'),
-        (EU, 'Euros'),
-        (S, 'Dólares'),
+         (EU, 'Euros'),
+         (S, 'Dólares'),
     ]
     
-    rota = models.ForeignKey(Rota, on_delete=models.CASCADE, db_column='id_rota')
+    # VÍNCULO OBRIGATÓRIO: Rastreia quem pediu o frete
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        db_column='id_usuario',
+        related_name='fretes'
+    )
     valor_frete = models.DecimalField(max_digits=10, decimal_places=2)
     moeda = models.CharField(
         max_length=5, 
@@ -32,4 +39,4 @@ class Frete(models.Model):
     rota = models.ForeignKey(Rota, on_delete=models.CASCADE, db_column='id_rota')
 
     def __str__(self):
-        return f"{self.id} - {self.carga} {self.rota} ({self.valor_frete} {self.status})  {self.motorista} {self.veiculo} {self.rota}"
+        return f"{self.id} - {self.carga} {self.rota} ({self.valor_frete} {self.status}) {self.motorista} {self.veiculo} {self.rota}"
