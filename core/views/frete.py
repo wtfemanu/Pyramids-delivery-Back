@@ -6,6 +6,7 @@ class FreteViewSet(viewsets.ModelViewSet):
     queryset = Frete.objects.all()
     serializer_class = FreteSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = None
 
     def get_queryset(self):
         # Usuários comuns só listam seus próprios fretes
