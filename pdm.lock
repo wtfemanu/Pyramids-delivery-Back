@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:0fdfb97e4d733316fd27a0114065eefc0beee2760256462b95bde0a55e24cf1c"
+content_hash = "sha256:2b236594e07bbc290c298c3ce4eed3bf36b6f9bf8699d7ffbda3ca13313582f2"
 
 [[metadata.targets]]
 requires_python = ">=3.10"
@@ -615,6 +615,17 @@ dependencies = [
 files = [
     {file = "jsonschema_specifications-2025.9.1-py3-none-any.whl", hash = "sha256:98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe"},
     {file = "jsonschema_specifications-2025.9.1.tar.gz", hash = "sha256:b540987f239e745613c7a9176f3edb72b832a4ac465cf02712288397832b5e8d"},
+]
+
+[[package]]
+name = "leaflet"
+version = "0.0.3"
+requires_python = ">=3"
+summary = "Dead simple I2P SAM library"
+groups = ["default"]
+files = [
+    {file = "leaflet-0.0.3-py3-none-any.whl", hash = "sha256:654053f4728e8326a38a1e80ee6fbfdca30a2dbf388d27cefe55f5912e546fd7"},
+    {file = "leaflet-0.0.3.tar.gz", hash = "sha256:f906a59a3e06b8d3f8b81eedfe30340187119bbef2dbaa73b79588c79be369c1"},
 ]
 
 [[package]]
