@@ -37,6 +37,9 @@ class Frete(models.Model):
     motorista = models.ForeignKey(Motorista, on_delete=models.CASCADE, db_column='id_motorista')
     veiculo = models.ForeignKey(Veiculo, on_delete=models.CASCADE, db_column='id_veiculo')
     rota = models.ForeignKey(Rota, on_delete=models.CASCADE, db_column='id_rota')
+    ultima_localizacao = models.CharField(max_length=255, blank=True, null=True)
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.id} - {self.carga} {self.rota} ({self.valor_frete} {self.status}) {self.motorista} {self.veiculo} {self.rota}"
