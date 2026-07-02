@@ -5,3 +5,4 @@ class RotaSerializer(ModelSerializer):
     class Meta:
         model = Rota
         fields = '__all__'
+        read_only_fields = ['usuario']
