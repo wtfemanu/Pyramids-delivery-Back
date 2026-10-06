@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from core.models import Frete, Motorista
-from core.serializers import FreteSerializer
+from core.serializers.frete import FreteSerializer
 
 class FreteViewSet(viewsets.ModelViewSet):
     queryset = Frete.objects.all()
@@ -13,42 +13,32 @@ class FreteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         tipo = self.request.query_params.get('tipo', None)
+        data_filtro = self.request.query_params.get('data', None)
 
-        # 👑 1. Superuser / Staff sem parâmetro de tipo (Visão Administrativa Total)
+        # Se for superuser/staff e NÃO especificou tipo, vê tudo
         if (user.is_superuser or user.is_staff) and not tipo:
-            return Frete.objects.all()
-
-        # 🚚 2. ABA / PAINEL DO MOTORISTA (?tipo=motorista)
-        if tipo == 'motorista':
-            # Como a model Motorista utiliza 'user', buscamos por ela
+            queryset = Frete.objects.all()
+        elif tipo == 'motorista':
+            # Localiza o motorista logado através da relação 'user'
             motorista_obj = Motorista.objects.filter(user=user).first()
-            if not motorista_obj and hasattr(Motorista, 'usuario'):
-                motorista_obj = Motorista.objects.filter(usuario=user).first()
-
-            # Se for admin testando a visão de motorista
-            if user.is_superuser or user.is_staff:
-                if motorista_obj:
-                    return Frete.objects.filter(motorista=motorista_obj)
-                return Frete.objects.all()
-
-            # Motorista comum: apenas as entregas atribuídas a ele
             if motorista_obj:
-                return Frete.objects.filter(motorista=motorista_obj)
-            
-            return Frete.objects.none()
+                queryset = Frete.objects.filter(motorista=motorista_obj)
+            else:
+                queryset = Frete.objects.none()
+        else:
+            # Utilizador comum: VÊ APENAS OS SEUS PRÓPRIOS FRETES
+            if user.is_superuser or user.is_staff:
+                fretes_proprios = Frete.objects.filter(usuario=user)
+                queryset = fretes_proprios if fretes_proprios.exists() else Frete.objects.all()
+            else:
+                queryset = Frete.objects.filter(usuario=user)
 
-        # 📦 3. ABA / PAINEL DO CLIENTE (?tipo=cliente ou padrão)
-        if user.is_superuser or user.is_staff:
-            fretes_proprios = Frete.objects.filter(usuario=user)
-            return fretes_proprios if fretes_proprios.exists() else Frete.objects.all()
+        if data_filtro:
+            queryset = queryset.filter(data_criacao__date=data_filtro)
 
-        return Frete.objects.filter(usuario=user)
+        return queryset
 
     def get_object(self):
-        """
-        Garante que operações individuais (PATCH, PUT, GET de ID específico) 
-        encontrem o frete tanto se o usuário for o criador quanto se for o motorista atribuído.
-        """
         queryset = self.filter_queryset(self.get_queryset())
         
         if self.action in ['retrieve', 'update', 'partial_update']:
@@ -60,9 +50,6 @@ class FreteViewSet(viewsets.ModelViewSet):
                 obj = Frete.objects.filter(**filter_kwargs).first()
             else:
                 motorista_obj = Motorista.objects.filter(user=user).first()
-                if not motorista_obj and hasattr(Motorista, 'usuario'):
-                    motorista_obj = Motorista.objects.filter(usuario=user).first()
-                
                 if motorista_obj:
                     obj = Frete.objects.filter(
                         Q(id=filter_kwargs['pk']) & (Q(usuario=user) | Q(motorista=motorista_obj))
@@ -78,4 +65,3 @@ class FreteViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(usuario=self.request.user)
-        
