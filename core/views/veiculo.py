@@ -11,14 +11,11 @@ class VeiculoViewSet(ModelViewSet):
     pagination_class = None
 
     def get_queryset(self):
-        if self.request.user.is_superuser or self.request.user.is_staff:
-            return Veiculo.objects.all()
-        return Veiculo.objects.filter(usuario=self.request.user)
+        return Veiculo.objects.all()
 
     def perform_create(self, serializer):
-        serializer.save(usuario=self.request.user)
+        serializer.save()
 
-    # Nova validação de exclusão (Apenas fretes ativos barram, conforme RN017.1)
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         fretes_ativos = Frete.objects.filter(veiculo=instance).exclude(status__iexact='concluido').exclude(status__iexact='entregue')
