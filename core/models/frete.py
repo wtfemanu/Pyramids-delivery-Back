@@ -18,7 +18,6 @@ class Frete(models.Model):
          (S, 'Dólares'),
     ]
     
-    # VÍNCULO OBRIGATÓRIO: Rastreia quem pediu o frete
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -40,6 +39,7 @@ class Frete(models.Model):
     ultima_localizacao = models.CharField(max_length=255, blank=True, null=True)
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
+    data_criacao = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.id} - {self.carga} {self.rota} ({self.valor_frete} {self.status}) {self.motorista} {self.veiculo} {self.rota}"
