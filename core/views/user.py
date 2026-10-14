@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+
 from core.models import User
 from core.serializers import UserRegistrationSerializer, UserSerializer
 
@@ -15,18 +17,52 @@ class UserViewSet(ModelViewSet):
     queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+    # Permitir JSON e Multipart/Form-data globalmente no ViewSet resolve o conflito para qualquer endpoint
+    parser_classes = [JSONParser, FormParser, MultiPartParser]
 
     @extend_schema(
-        summary="Dados do usuário autenticado",
-        description="Retorna os dados do usuário autenticado.",
+        summary="Dados e atualização do usuário autenticado",
+        description="Retorna ou atualiza os dados do usuário autenticado.",
         responses={200: UserSerializer, 401: None},
     )
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['get', 'put', 'patch'], permission_classes=[IsAuthenticated])
     def me(self, request):
-        """ Retorna os dados do usuário autenticado."""
+        """Retorna ou atualiza os dados do usuário autenticado."""
         user = request.user
-        serializer = UserSerializer(user)
+        
+        if request.method in ['PUT', 'PATCH']:
+            partial = request.method == 'PATCH'
+            serializer = self.get_serializer(user, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        serializer = self.get_serializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        summary="Alterar senha do usuário autenticado",
+        description="Permite ao usuário autenticado alterar sua senha informando a senha antiga e a nova senha.",
+    )
+    @action(detail=False, methods=['post'], url_path='password/change', permission_classes=[IsAuthenticated])
+    def change_password(self, request):
+        """Permite alterar a senha do utilizador logado."""
+        user = request.user
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+
+        if not old_password or not new_password:
+            return Response({"detail": "Informe a senha antiga e a nova senha."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not user.check_password(old_password):
+            return Response({"detail": "A senha atual está incorreta."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if len(new_password) < 8:
+            return Response({"detail": "A nova senha deve ter pelo menos 8 caracteres."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new_password)
+        user.save()
+        return Response({"detail": "Senha alterada com sucesso."}, status=status.HTTP_200_OK)
 
 
 class UserRegistrationView(CreateAPIView):
@@ -35,6 +71,7 @@ class UserRegistrationView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = [AllowAny]
+
 
 class CustomLoginView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
