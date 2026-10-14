@@ -19,21 +19,8 @@ class FreteSerializer(serializers.ModelSerializer):
             self.fields['carga'].queryset = CargaModel.objects.filter(usuario=request.user)
 
     def validate(self, data):
-        # Força o status inicial como PENDENTE se não vier preenchido
+        # Força o estado inicial como PENDENTE se não vier preenchido
         if not data.get('status'):
             data['status'] = 'PENDENTE'
 
-        motorista = data.get('motorista')
-        if motorista:
-            frete_ativo_existente = Frete.objects.filter(
-                motorista=motorista, 
-                status__in=['PENDENTE', 'EM_TRANSITO']
-            )
-            if self.instance:
-                frete_ativo_existente = frete_ativo_existente.exclude(pk=self.instance.pk)
-            
-            if frete_ativo_existente.exists():
-                raise serializers.ValidationError(
-                    {"motorista": "Este motorista já possui um frete ativo no momento e não está disponível."}
-                )
         return data
