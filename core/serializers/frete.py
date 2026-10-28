@@ -8,7 +8,14 @@ class FreteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Frete
         fields = '__all__'
-        read_only_fields = ('usuario', 'data_criacao')
+        read_only_fields = (
+            'usuario',
+            'data_criacao',
+            'status_pagamento',
+            'forma_pagamento',
+            'data_pagamento',
+            'mp_payment_id',
+        )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

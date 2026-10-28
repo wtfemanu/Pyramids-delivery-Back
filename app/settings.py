@@ -1,7 +1,6 @@
 import os
 from datetime import timedelta
 from pathlib import Path
-
 import dj_database_url
 from dotenv import load_dotenv
 
@@ -158,5 +157,21 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
+# ---------------------------------------------------------------------------
+# Mercado Pago (pagamentos de fretes)
+# ---------------------------------------------------------------------------
+# Access Token da sua aplicação (painel de desenvolvedores do Mercado Pago).
+# NUNCA coloque o token direto no código nem suba o .env para o Git.
+MERCADOPAGO_ACCESS_TOKEN = os.getenv('MERCADOPAGO_ACCESS_TOKEN', '')
+
+# Endereço do frontend Vue: é para onde o Mercado Pago devolve o cliente após pagar
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
+
+# Opcional: URL pública COMPLETA do webhook (ex.: https://seu-tunel.ngrok.app/pagamentos/webhook/).
+# Deixe vazio em desenvolvimento se não estiver usando túnel.
+MERCADOPAGO_WEBHOOK_URL = os.getenv('MERCADOPAGO_WEBHOOK_URL', '')
+
 # Exibe as configurações principais para verificação
 print(f'{MODE = } \n{MEDIA_URL = } \n{DATABASES = }')
+print(f'{MODE = } \n{MEDIA_URL = } \n{DATABASES = }')
+print(f'Mercado Pago: token com {len(MERCADOPAGO_ACCESS_TOKEN)} caracteres')
