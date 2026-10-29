@@ -15,6 +15,7 @@ from rest_framework_simplejwt.views import (
 )
 from django.conf import settings  
 from core.views import MotoristaViewSet, UserRegistrationView, UserViewSet, VeiculoViewSet, CargaViewSet, RotaViewSet, UserViewSet, FreteViewSet, CustomLoginView
+from core.views.pagamento import MercadoPagoWebhookView
 
 router = DefaultRouter()
 
@@ -49,6 +50,7 @@ urlpatterns = [
     path('api/login/', CustomLoginView.as_view(), name='login'),
     # API
     path('api/', include(router.urls)), 
+    path('pagamentos/webhook/', MercadoPagoWebhookView.as_view(), name='mp-webhook'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

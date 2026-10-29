@@ -27,21 +27,22 @@ class UserManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, email, password):
+    def create_superuser(self, email, password, **extra_fields):
         """Create, save and return a new superuser."""
-        user = self.create_user(email, password)
-        user.is_staff = True
-        user.is_superuser = True
-        user.save(using=self._db)
-
-        return user
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(email, password, **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
     """User model in the system."""
 
     email = models.EmailField(max_length=255, unique=True, verbose_name=_('email'), help_text=_('Email'))
-    name = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('name'), help_text=_('Username'))
+    username = models.CharField(max_length=255, unique=True, blank=True, null=True, verbose_name=_('username'), help_text=_('Username'))
+    first_name = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Nome'), help_text=_('Nome'))
+    last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Sobrenome'), help_text=_('Sobrenome'))
+    foto = models.ImageField(upload_to='perfis/', blank=True, null=True, verbose_name=_('Foto de Perfil'))
+    
     is_active = models.BooleanField(
         default=True, verbose_name=_('Usuário está ativo'), help_text=_('Indica que este usuário está ativo.')
     )
@@ -51,11 +52,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text=_('Indica que este usuário pode acessar o Admin.'),
     )
 
-    
     objects = UserManager()
 
     USERNAME_FIELD = 'email' 
-    REQUIRED_FIELDS = ['name'] # Campos obrigatórios ao criar via terminal
+    REQUIRED_FIELDS = ['username'] # Campos obrigatórios ao criar via terminal
 
     class Meta:
         """Meta options for the model."""
